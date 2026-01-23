@@ -15,14 +15,12 @@
         .font-floral { font-family: 'Great Vibes', cursive; }
         .bg-cream { background-color: #fcfaf7; }
         
-        /* Efecto de cristal para el formulario */
         .glass-card {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-        /* Estilo de inputs y selects */
         .input-wedding {
             width: 100%;
             background-color: transparent;
@@ -38,12 +36,12 @@
         
         .input-wedding:focus { border-bottom-color: #4b5563; }
 
-        /* Flecha personalizada para el select */
         select.input-wedding {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: right 0.5rem center;
             background-size: 1.1em;
+            cursor: pointer;
         }
         
         .btn-elegant {
@@ -52,7 +50,6 @@
         }
         .btn-elegant:active { transform: scale(0.96); }
 
-        /* Pantalla de carga */
         #overlay.invisible { opacity: 0; pointer-events: none; }
     </style>
 </head>
@@ -86,31 +83,32 @@
             </div>
         </section>
 
-        <section class="py-24 px-4 md:px-6">
-            <div class="max-w-xl mx-auto glass-card rounded-3xl p-8 md:p-12 shadow-2xl" data-aos="fade-up">
+        <section class="pt-24 pb-64 px-4 md:px-6"> 
+            <div id="rsvp-container" class="max-w-xl mx-auto glass-card rounded-3xl p-8 md:p-12 shadow-2xl" data-aos="fade-up">
                 <h3 class="font-floral text-center text-6xl mb-4 text-stone-800">Confirmación</h3>
-                <p class="text-center text-[10px] uppercase tracking-[0.3em] text-stone-400 mb-12">R.S.V.P.</p>
-                
                 <form id="weddingForm" class="space-y-10">
                     <div class="relative">
                         <label class="text-[9px] uppercase tracking-widest text-stone-400 absolute -top-4">Busca tu nombre</label>
                         <select id="nombreSelect" required class="input-wedding">
-                            <option value="" disabled selected>Cargando lista...</option>
+                            <option value="" disabled selected>Cargando lista MILLER...</option>
                         </select>
                     </div>
 
                     <div id="pasesInfo" class="hidden transform transition-all duration-500 scale-95 opacity-0">
-                        <div class="text-center py-8 bg-stone-50 rounded-2xl border border-stone-100">
+                        <div class="text-center py-8 bg-stone-50 rounded-2xl border border-stone-100 px-6">
                             <p class="text-xs text-stone-400 uppercase tracking-widest mb-2">Hola <span id="guestName" class="text-stone-800 font-semibold"></span></p>
-                            <p class="text-sm text-stone-500 font-light italic">Hemos reservado para ti:</p>
-                            <p class="text-5xl font-floral text-stone-800 mt-2"><span id="guestPases">0</span> pases</p>
+                            <p class="text-sm text-stone-500 font-light italic">Tienes <span id="guestPases">0</span> pases reservados.</p>
+                            <div class="mt-6">
+                                <label class="text-[10px] uppercase tracking-widest text-stone-500 block mb-2">¿Cuántos asistirán?</label>
+                                <select id="pasesConfirmadosSelect" class="input-wedding !text-center !border-stone-300"></select>
+                            </div>
                         </div>
                     </div>
 
                     <div class="relative">
-                        <label class="text-[9px] uppercase tracking-widest text-stone-400 absolute -top-4">¿Nos acompañas?</label>
+                        <label class="text-[9px] uppercase tracking-widest text-stone-400 absolute -top-4">¿Nos acompañan?</label>
                         <select id="asistencia" name="asistencia" class="input-wedding">
-                            <option value="Confirmado">¡Sí, ahí estaré!</option>
+                            <option value="Confirmado">¡Sí, ahí estaremos!</option>
                             <option value="Cancelado">Lamentablemente no puedo</option>
                         </select>
                     </div>
@@ -131,17 +129,12 @@
                 </div>
             </div>
         </section>
-
-        <footer class="py-12 text-center">
-            <p class="font-floral text-3xl text-stone-200">R & P</p>
-        </footer>
     </main>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init({ duration: 1200, once: true });
 
-        // CONFIGURACIÓN SUPABASE
         const { createClient } = supabase;
         const _supabase = createClient('https://iqwkaorhtksudfspupzo.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlxd2thb3JodGtzdWRmc3B1cHpvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxMTQzNTUsImV4cCI6MjA4NDY5MDM1NX0.7vgdhkqHSFUDv6WrFE_5E40YfEh6CmGHovLOYkJ2sNw');
 
@@ -149,20 +142,15 @@
         const weddingForm = document.getElementById('weddingForm');
         const nombreSelect = document.getElementById('nombreSelect');
         const pasesInfo = document.getElementById('pasesInfo');
+        const pasesConfirmSelect = document.getElementById('pasesConfirmadosSelect');
 
-       // 1. CARGAR INVITADOS FILTRADOS
         async function init() {
             const { data, error } = await _supabase
                 .from('invitados')
-                .select('fam_nombre, num_invitados, boda_slug') // Traemos también el slug para validar
-                .eq('boda_slug', 'MILLER') // <--- ESTE ES EL FILTRO
+                .select('fam_nombre, num_invitados, boda_slug, confirmado')
+                .eq('boda_slug', 'MILLER')
+                .or('confirmado.is.null,confirmado.eq.0')
                 .order('fam_nombre', { ascending: true });
-
-            if (error) {
-                console.error("Error al cargar lista:", error);
-                nombreSelect.innerHTML = '<option value="">Error al conectar</option>';
-                return;
-            }
 
             if (data) {
                 nombreSelect.innerHTML = '<option value="" disabled selected>Selecciona tu nombre</option>';
@@ -176,41 +164,56 @@
             }
         }
 
-        // 2. MOSTRAR INFO DE PASES
         nombreSelect.onchange = (e) => {
             const selected = e.target.options[e.target.selectedIndex];
+            const totalPases = parseInt(selected.dataset.pases);
             document.getElementById('guestName').innerText = selected.text;
-            document.getElementById('guestPases').innerText = selected.dataset.pases;
-            
+            document.getElementById('guestPases').innerText = totalPases;
+            pasesConfirmSelect.innerHTML = '';
+            for (let i = 1; i <= totalPases; i++) {
+                let opt = document.createElement('option');
+                opt.value = i; opt.text = i + (i === 1 ? " Persona" : " Personas");
+                pasesConfirmSelect.appendChild(opt);
+            }
             pasesInfo.classList.remove('hidden');
             setTimeout(() => {
                 pasesInfo.classList.add('scale-100', 'opacity-100');
+                document.getElementById('rsvp-container').scrollIntoView({ behavior: 'smooth', block: 'center' });
             }, 50);
         };
 
-        // 3. ENVIAR CONFIRMACIÓN
         weddingForm.onsubmit = async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
+            const asistenciaVal = document.getElementById('asistencia').value;
             btn.innerText = "PROCESANDO...";
             btn.disabled = true;
 
-            const selectedOption = nombreSelect.options[nombreSelect.selectedIndex];
+            const pasesReal = (asistenciaVal === "Cancelado") ? 0 : parseInt(pasesConfirmSelect.value);
 
-            const { error } = await _supabase
+            // Operación 1: Insertar en confirmaciones
+            const { error: errorConfirm } = await _supabase
                 .from('confirmaciones')
-                .insert([{
-                    fam_nombre: nombreSelect.value,
-                    asistencia: document.getElementById('asistencia').value,
-                    pases_confirmados: parseInt(selectedOption.dataset.pases)
-                }]);
+                .insert([{ fam_nombre: nombreSelect.value, asistencia: asistenciaVal, pases_confirmados: pasesReal }]);
 
-            if (!error) {
+            // Operación 2: Actualizar tabla invitados
+            // Aquí se cambia el estado a 'CANCELADO' solo si el valor es 'Cancelado'
+            const { error: errorInvitado } = await _supabase
+                .from('invitados')
+                .update({ 
+                    num_invitados_confirmados: pasesReal,
+                    confirmado: 1,
+                    estado: (asistenciaVal === "Cancelado") ? "CANCELADO" : "Confirmado"
+                })
+                .eq('fam_nombre', nombreSelect.value)
+                .eq('boda_slug', 'MILLER');
+
+            if (!errorConfirm && !errorInvitado) {
                 weddingForm.style.display = 'none';
                 document.getElementById('successMessage').classList.remove('hidden');
             } else {
-                console.error("Error de Supabase:", error);
-                alert("Error al enviar: " + error.message);
+                console.error("Error:", errorConfirm || errorInvitado);
+                alert("Error al enviar los datos.");
                 btn.disabled = false;
                 btn.innerText = "CONFIRMAR ASISTENCIA";
             }
@@ -221,7 +224,7 @@
             setTimeout(() => {
                 document.getElementById('mainContent').classList.remove('opacity-0');
                 document.getElementById('muteBtn').classList.remove('hidden');
-                audio.play().catch(e => console.log("Autoplay bloqueado"));
+                audio.play().catch(() => {});
                 AOS.refresh();
             }, 800);
         }
