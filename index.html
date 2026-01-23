@@ -14,14 +14,25 @@
         .font-floral { font-family: 'Great Vibes', cursive; }
         .bg-cream { background-color: #f9f7f2; }
         
-        /* Estilo para el botón de música cuando está activo */
-        .music-pulse {
-            animation: pulse 2s infinite;
+        /* Contenedor responsivo para el formulario */
+        .form-container {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            padding-top: 150%; /* Ajusta esto según el largo de tu formulario */
         }
-        @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.2); }
-            70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(0, 0, 0, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 0, 0, 0); }
+        @media (min-width: 768px) {
+            .form-container { padding-top: 100%; }
+        }
+        .form-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
         }
     </style>
 </head>
@@ -93,15 +104,25 @@
             </div>
         </section>
 
-        <section class="py-32 bg-white text-center px-6">
-            <div data-aos="zoom-in" class="max-w-xl mx-auto">
-                <h3 class="font-floral text-6xl mb-6">RSVP</h3>
+        <section class="py-20 bg-white text-center px-4">
+            <div class="max-w-3xl mx-auto" data-aos="zoom-in">
+                <h3 class="font-floral text-6xl mb-6">Confirmación</h3>
                 <p class="text-gray-500 font-light mb-10 leading-relaxed uppercase tracking-widest text-sm">
-                    Para nosotros es muy importante contar con tu presencia. Por favor confirma antes del 01 de Octubre.
+                    Por favor completa el formulario para confirmar tu lugar en nuestro gran día.
                 </p>
-                <button onclick="window.open('https://wa.me/TUNUMERO')" class="bg-stone-800 text-white px-12 py-4 tracking-widest text-xs hover:bg-stone-700 transition-all shadow-xl">
-                    CONFIRMAR ASISTENCIA
-                </button>
+                
+                <div class="form-container border border-stone-200 rounded-lg bg-stone-50 overflow-hidden shadow-inner">
+                    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdw2S_Y6o42V6N_rF6p93T9m6J0S9-j_x-F1z9-j_x-F1z9-j/viewform?embedded=true">
+                        Cargando…
+                    </iframe>
+                </div>
+
+                <div class="mt-12 p-8 border-t border-stone-100">
+                    <p class="text-xs text-gray-400 uppercase tracking-widest mb-4">¿Tienes alguna duda adicional?</p>
+                    <button onclick="window.open('https://wa.me/TUNUMERO')" class="text-green-600 font-semibold flex items-center justify-center gap-2 mx-auto hover:underline">
+                        Contactar por WhatsApp
+                    </button>
+                </div>
             </div>
         </section>
 
@@ -113,74 +134,48 @@
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        // Inicializar animaciones de scroll
         AOS.init({ duration: 1500, once: true });
 
         const audio = document.getElementById('bgMusic');
         const muteBtn = document.getElementById('muteBtn');
-        const musicOnIcon = document.getElementById('musicOnIcon');
-        const musicOffIcon = document.getElementById('musicOffIcon');
 
-        // Lógica para iniciar la experiencia
         function startInvitation() {
-            // Animación de salida del overlay
             document.getElementById('overlay').classList.add('opacity-0');
-            
             setTimeout(() => {
                 document.getElementById('overlay').classList.add('hidden');
-                
-                // Mostrar contenido principal con suavidad
-                const main = document.getElementById('mainContent');
-                main.classList.remove('opacity-0');
-                
-                // Mostrar botón de música
+                document.getElementById('mainContent').classList.remove('opacity-0');
                 muteBtn.classList.remove('hidden');
-                
-                // Intentar reproducir audio
-                audio.play().catch(e => console.log("Navegador bloqueó autoplay"));
-                
-                // Refrescar animaciones AOS
+                audio.play().catch(e => console.log("Autoplay bloqueado"));
                 AOS.refresh();
             }, 1000);
         }
 
-        // Lógica del botón Play/Pause
         function toggleMusic() {
             if (audio.paused) {
                 audio.play();
-                musicOnIcon.classList.remove('hidden');
-                musicOffIcon.classList.add('hidden');
+                document.getElementById('musicOnIcon').classList.remove('hidden');
+                document.getElementById('musicOffIcon').classList.add('hidden');
             } else {
                 audio.pause();
-                musicOnIcon.classList.add('hidden');
-                musicOffIcon.classList.remove('hidden');
+                document.getElementById('musicOnIcon').classList.add('hidden');
+                document.getElementById('musicOffIcon').classList.remove('hidden');
             }
         }
 
-        // Lógica del Contador
+        // Contador
         const targetDate = new Date('Oct 24, 2026 18:00:00').getTime();
-
-        const updateCountdown = () => {
+        setInterval(() => {
             const now = new Date().getTime();
             const gap = targetDate - now;
-
-            const second = 1000;
-            const minute = second * 60;
-            const hour = minute * 60;
-            const day = hour * 24;
-
-            const d = Math.floor(gap / day);
-            const h = Math.floor((gap % day) / hour);
-            const m = Math.floor((gap % hour) / minute);
-            const s = Math.floor((gap % minute) / second);
-
-            document.getElementById('days').innerText = d < 10 ? '0'+d : d;
-            document.getElementById('hours').innerText = h < 10 ? '0'+h : h;
-            document.getElementById('minutes').innerText = m < 10 ? '0'+m : m;
-            document.getElementById('seconds').innerText = s < 10 ? '0'+s : s;
-        };
-
-        setInterval(updateCountdown, 1000);
+            const d = Math.floor(gap / (1000 * 60 * 60 * 24));
+            const h = Math.floor((gap % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((gap % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((gap % (1000 * 60)) / 1000);
+            document.getElementById('days').innerText = d;
+            document.getElementById('hours').innerText = h;
+            document.getElementById('minutes').innerText = m;
+            document.getElementById('seconds').innerText = s;
+        }, 1000);
     </script>
 </body>
 </html>
