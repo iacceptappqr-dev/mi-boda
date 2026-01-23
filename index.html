@@ -3,237 +3,262 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nuestra Boda | Ruby & Pablo</title>
+    <title>Generador PDF - Invitación Final (QR ID)</title>
     
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <style>
-        body { font-family: 'Montserrat', sans-serif; scroll-behavior: smooth; }
-        .font-floral { font-family: 'Great Vibes', cursive; }
-        .bg-cream { background-color: #fcfaf7; }
+        body { font-family: 'Georgia', serif; background: #eef2f3; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 420px; text-align: center; }
+        h2 { color: #926F34; margin-top: 0; font-style: italic; }
         
-        .glass-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .input-wedding {
-            width: 100%;
-            background-color: transparent;
-            border-bottom: 2px solid #e5e7eb;
-            padding: 1rem 0;
-            outline: none;
-            transition: all 0.4s ease;
-            font-size: 1rem;
-            border-radius: 0;
-            -webkit-appearance: none;
-            appearance: none;
-        }
+        .info-evento { background: #f9f9f9; padding: 10px; border-radius: 6px; margin-bottom: 20px; border: 1px dashed #ccc; font-size: 0.85em; color: #555; text-align: left;}
+        input { width: 100%; margin: 8px 0; padding: 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-family: 'Georgia', serif; }
+        button { width: 100%; padding: 15px; background: #926F34; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; margin-top: 15px; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; transition: background 0.3s;}
+        button:hover { background: #7a5d2b; }
         
-        .input-wedding:focus { border-bottom-color: #4b5563; }
-
-        select.input-wedding {
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 0.5rem center;
-            background-size: 1.1em;
-            cursor: pointer;
-        }
-        
-        .btn-elegant {
-            transition: all 0.3s ease;
-            letter-spacing: 0.2em;
-        }
-        .btn-elegant:active { transform: scale(0.96); }
-
-        #overlay.invisible { opacity: 0; pointer-events: none; }
+        /* Ocultamos los canvas de trabajo */
+        #canvasInvitacion, #canvasPase, #qrcode-temp { display: none; }
     </style>
 </head>
-<body class="bg-cream text-gray-800 overflow-x-hidden">
+<body>
 
-    <div id="overlay" class="fixed inset-0 z-[60] flex flex-col items-center justify-center bg-white transition-all duration-1000">
-        <div class="text-center px-6" data-aos="fade-up">
-            <h1 class="text-6xl md:text-8xl font-floral mb-6 text-stone-800">Ruby & Pablo</h1>
-            <div class="w-16 h-px bg-stone-300 mx-auto mb-10"></div>
-            <button onclick="startInvitation()" class="px-10 py-4 border border-stone-800 text-stone-800 uppercase text-xs tracking-[0.3em] hover:bg-stone-800 hover:text-white transition-all duration-500">
-                Abrir Invitación
-            </button>
-        </div>
-    </div>
+<div class="card">
+    <h2>Datos del Invitado</h2>
+    <div class="info-evento" id="resumenDatos">Cargando datos del evento...</div>
+    
+    <input type="text" id="familia" placeholder="Apellidos (Ej. Pérez López)">
+    <input type="text" id="mesa" placeholder="Número de Mesa">
+    <input type="number" id="invitaciones" placeholder="Cantidad de Personas">
+    
+    <button id="btnDescargar" onclick="generarPDF()">Descargar Invitación + Pase</button>
+</div>
 
-    <button id="muteBtn" onclick="toggleMusic()" class="fixed bottom-6 right-6 z-50 bg-white/80 backdrop-blur-md p-4 rounded-full shadow-2xl hidden border border-stone-100">
-        <svg id="musicIcon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-stone-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-        </svg>
-    </button>
-    <audio id="bgMusic" loop src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+<div id="qrcode-temp"></div>
+<canvas id="canvasInvitacion"></canvas> 
+<canvas id="canvasPase"></canvas>
 
-    <main id="mainContent" class="opacity-0 transition-opacity duration-1000">
-        <section class="h-screen flex items-center justify-center bg-cover bg-center relative" style="background-image: url('https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=2069');">
-            <div class="absolute inset-0 bg-black/40"></div>
-            <div class="relative text-center text-white px-4">
-                <p class="uppercase tracking-[0.4em] text-[10px] mb-4" data-aos="fade-down">Nuestra Boda</p>
-                <h2 class="text-7xl md:text-9xl font-floral mb-4" data-aos="zoom-in">Ruby & Pablo</h2>
-                <div class="w-12 h-px bg-white/50 mx-auto my-6"></div>
-                <p class="text-lg tracking-widest font-light" data-aos="fade-up">24 . OCTUBRE . 2026</p>
-            </div>
-        </section>
+<script>
+    // =========================================================
+    // 1. CONFIGURACIÓN DE SUPABASE
+    // =========================================================
+    const SUPABASE_URL = 'https://iqwkaorhtksudfspupzo.supabase.co/';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlxd2thb3JodGtzdWRmc3B1cHpvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxMTQzNTUsImV4cCI6MjA4NDY5MDM1NX0.7vgdhkqHSFUDv6WrFE_5E40YfEh6CmGHovLOYkJ2sNw';
+     
+    const { createClient } = supabase;
+    const _supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        <section class="pt-24 pb-64 px-4 md:px-6"> 
-            <div id="rsvp-container" class="max-w-xl mx-auto glass-card rounded-3xl p-8 md:p-12 shadow-2xl" data-aos="fade-up">
-                <h3 class="font-floral text-center text-6xl mb-4 text-stone-800">Confirmación</h3>
-                <form id="weddingForm" class="space-y-10">
-                    <div class="relative">
-                        <label class="text-[9px] uppercase tracking-widest text-stone-400 absolute -top-4">Busca tu nombre</label>
-                        <select id="nombreSelect" required class="input-wedding">
-                            <option value="" disabled selected>Cargando lista MILLER...</option>
-                        </select>
-                    </div>
+    // =========================================================
+    // 2. LÓGICA DEL PROGRAMA
+    // =========================================================
+    let datosEvento = { nombre: "", diaNombre: "", diaNumero: "", mes: "", hora: "" };
 
-                    <div id="pasesInfo" class="hidden transform transition-all duration-500 scale-95 opacity-0">
-                        <div class="text-center py-8 bg-stone-50 rounded-2xl border border-stone-100 px-6">
-                            <p class="text-xs text-stone-400 uppercase tracking-widest mb-2">Hola <span id="guestName" class="text-stone-800 font-semibold"></span></p>
-                            <p class="text-sm text-stone-500 font-light italic">Tienes <span id="guestPases">0</span> pases reservados.</p>
-                            <div class="mt-6">
-                                <label class="text-[10px] uppercase tracking-widest text-stone-500 block mb-2">¿Cuántos asistirán?</label>
-                                <select id="pasesConfirmadosSelect" class="input-wedding !text-center !border-stone-300"></select>
-                            </div>
-                        </div>
-                    </div>
+    window.onload = function() {
+        const params = new URLSearchParams(window.location.search);
+        // El slug de la boda viene del parámetro 'evento' en la URL
+        datosEvento.nombre = decodeURIComponent(params.get('evento') || "Boda");
+        datosEvento.diaNombre = decodeURIComponent(params.get('diaNombre') || "SÁBADO");
+        datosEvento.diaNumero = decodeURIComponent(params.get('diaNumero') || "24");
+        datosEvento.mes = decodeURIComponent(params.get('mes') || "OCTUBRE");
+        datosEvento.hora = decodeURIComponent(params.get('hora') || "6:00 PM");
 
-                    <div class="relative">
-                        <label class="text-[9px] uppercase tracking-widest text-stone-400 absolute -top-4">¿Nos acompañan?</label>
-                        <select id="asistencia" name="asistencia" class="input-wedding">
-                            <option value="Confirmado">¡Sí, ahí estaremos!</option>
-                            <option value="Cancelado">Lamentablemente no puedo</option>
-                        </select>
-                    </div>
+        document.getElementById('resumenDatos').innerHTML = `
+            <strong>Evento (boda_slug):</strong> ${datosEvento.nombre}<br>
+            <strong>Fecha:</strong> ${datosEvento.diaNombre} ${datosEvento.diaNumero} de ${datosEvento.mes}<br>
+            <strong>Hora:</strong> ${datosEvento.hora}
+        `;
+    };
 
-                    <button type="submit" id="submitBtn" class="btn-elegant w-full bg-stone-800 text-white py-5 rounded-full text-[10px] uppercase tracking-[0.3em] shadow-xl shadow-stone-200">
-                        Confirmar Asistencia
-                    </button>
-                </form>
+    function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+        let words = text.split(' '); let line = ''; let lines = [];
+        for(let n = 0; n < words.length; n++) {
+            let testLine = line + words[n] + ' ';
+            let metrics = ctx.measureText(testLine);
+            if (metrics.width > maxWidth && n > 0) { lines.push(line); line = words[n] + ' '; }
+            else { line = testLine; }
+        }
+        lines.push(line);
+        let startY = y;
+        if (lines.length > 1) { startY = y - ((lines.length - 1) * lineHeight) / 2; }
+        for(let k = 0; k < lines.length; k++) { ctx.fillText(lines[k], x, startY + (k * lineHeight)); }
+    }
 
-                <div id="successMessage" class="hidden text-center py-16" data-aos="zoom-in">
-                    <div class="mb-6 text-stone-800">
-                        <svg class="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M5 13l4 4L19 7"></path>
-                        </svg>
-                    </div>
-                    <h4 class="font-floral text-5xl mb-4">¡Muchas Gracias!</h4>
-                    <p class="text-[10px] uppercase tracking-widest text-stone-400 leading-loose">Tu respuesta ha sido guardada con éxito.</p>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script>
-        AOS.init({ duration: 1200, once: true });
-
-        const { createClient } = supabase;
-        const _supabase = createClient('https://iqwkaorhtksudfspupzo.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlxd2thb3JodGtzdWRmc3B1cHpvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxMTQzNTUsImV4cCI6MjA4NDY5MDM1NX0.7vgdhkqHSFUDv6WrFE_5E40YfEh6CmGHovLOYkJ2sNw');
-
-        const audio = document.getElementById('bgMusic');
-        const weddingForm = document.getElementById('weddingForm');
-        const nombreSelect = document.getElementById('nombreSelect');
-        const pasesInfo = document.getElementById('pasesInfo');
-        const pasesConfirmSelect = document.getElementById('pasesConfirmadosSelect');
-
-        async function init() {
+    // --- FUNCIÓN GUARDAR EN BD CORREGIDA ---
+    async function guardarInvitadoBD(familia, mesa, numInvitados, idAleatorio) {
+        try {
             const { data, error } = await _supabase
-                .from('invitados')
-                .select('fam_nombre, num_invitados, boda_slug, confirmado')
-                .eq('boda_slug', 'MILLER')
-                .or('confirmado.is.null,confirmado.eq.0')
-                .order('fam_nombre', { ascending: true });
+                .from('invitados') 
+                .insert([{ 
+                        id_invitado_firebase: idAleatorio,
+                        boda_slug: datosEvento.nombre,
+                        fam_nombre: familia,
+                        num_invitados: parseInt(numInvitados),
+                        num_mesa: parseInt(mesa),
+                        estado: 'sin llegar',
+                        num_invitados_confirmados: 0,
+                        invitados_llegados: 0,
+                        confirmado: 0 
+                }])
+                .select();
 
-            if (data) {
-                nombreSelect.innerHTML = '<option value="" disabled selected>Selecciona tu nombre</option>';
-                data.forEach(inv => {
-                    let opt = document.createElement('option');
-                    opt.value = inv.fam_nombre;
-                    opt.text = inv.fam_nombre;
-                    opt.dataset.pases = inv.num_invitados;
-                    nombreSelect.appendChild(opt);
-                });
+            if (error) {
+                console.error("Error BD:", error);
+                if (error.code === '23503') { 
+                    alert(`Error: El evento "${datosEvento.nombre}" no existe en la tabla de Bodas.`);
+                } else {
+                    alert("Error guardando en BD: " + error.message);
+                }
+                return false;
             }
+            return true;
+        } catch (err) {
+            console.error(err);
+            alert("Error de conexión con la base de datos.");
+            return false;
+        }
+    }
+
+    async function generarPDF() {
+        if (!window.jspdf) return alert("Error de librerías.");
+        const { jsPDF } = window.jspdf;
+        
+        const inputFamilia = document.getElementById('familia').value;
+        const mesa = document.getElementById('mesa').value || "0";
+        const invitaciones = document.getElementById('invitaciones').value || "1";
+        const btn = document.getElementById('btnDescargar');
+
+        if(!inputFamilia) return alert("Escribe el nombre de la familia.");
+
+        btn.disabled = true;
+        btn.innerText = "Procesando...";
+
+        // Generamos ID único (UUID)
+        const idAleatorio = crypto.randomUUID();
+
+        // 1. Guardar en Base de Datos
+        const guardadoExitoso = await guardarInvitadoBD(inputFamilia, mesa, invitaciones, idAleatorio);
+        
+        if (!guardadoExitoso) {
+            btn.disabled = false;
+            btn.innerText = "Descargar Invitación + Pase";
+            return; 
         }
 
-        nombreSelect.onchange = (e) => {
-            const selected = e.target.options[e.target.selectedIndex];
-            const totalPases = parseInt(selected.dataset.pases);
-            document.getElementById('guestName').innerText = selected.text;
-            document.getElementById('guestPases').innerText = totalPases;
-            pasesConfirmSelect.innerHTML = '';
-            for (let i = 1; i <= totalPases; i++) {
-                let opt = document.createElement('option');
-                opt.value = i; opt.text = i + (i === 1 ? " Persona" : " Personas");
-                pasesConfirmSelect.appendChild(opt);
-            }
-            pasesInfo.classList.remove('hidden');
+        let nombreFamiliaFinal = inputFamilia.trim();
+        if (!nombreFamiliaFinal.toUpperCase().startsWith("FAM")) {
+            nombreFamiliaFinal = "FAM. " + nombreFamiliaFinal.toUpperCase();
+        } else {
+            nombreFamiliaFinal = nombreFamiliaFinal.toUpperCase();
+        }
+
+        const img = new Image();
+        img.src = 'Fondo.jpg'; 
+
+        img.onload = function() {
+            // PÁGINA 1: INVITACIÓN
+            const cv1 = document.getElementById('canvasInvitacion');
+            const ctx1 = cv1.getContext('2d');
+            cv1.width = img.width; cv1.height = img.height;
+            ctx1.drawImage(img, 0, 0); 
+            
+            ctx1.fillStyle = "#926F34"; ctx1.textAlign = "center";
+            ctx1.font = "italic " + (cv1.height * 0.04) + "px Georgia, serif"; 
+            ctx1.fillText("NOS CASAMOS", cv1.width / 2, cv1.height * 0.28);
+            
+            ctx1.font = "italic " + (cv1.height * 0.05) + "px Georgia, serif"; 
+            ctx1.fillText("Ruby & Pablo", cv1.width / 2, cv1.height * 0.35);
+            
+            ctx1.font = (cv1.height * 0.025) + "px Arial"; 
+            ctx1.fillText("INVITACIÓN PARA:", cv1.width / 2, cv1.height * 0.43);
+            
+            let fontFamilia = cv1.height * 0.055; 
+            ctx1.font = "bold " + fontFamilia + "px Georgia, serif";
+            wrapText(ctx1, nombreFamiliaFinal, cv1.width / 2, cv1.height * 0.52, cv1.width * 0.8, fontFamilia * 1.2);
+            
+            ctx1.font = (cv1.height * 0.035) + "px Georgia, serif"; 
+            ctx1.fillText("PERSONAS: " + invitaciones, cv1.width / 2, cv1.height * 0.62);
+            
+            let yFecha = cv1.height * 0.72; let cx = cv1.width / 2; 
+            ctx1.font = (cv1.height * 0.025) + "px Arial"; ctx1.textAlign = "right"; 
+            ctx1.fillText(datosEvento.diaNombre.toUpperCase(), cx - (cv1.width * 0.12), yFecha);
+            
+            ctx1.font = "italic bold " + (cv1.height * 0.075) + "px Georgia, serif"; ctx1.textAlign = "center"; 
+            ctx1.fillText(datosEvento.diaNumero, cx, yFecha);
+            
+            ctx1.font = (cv1.height * 0.025) + "px Arial"; ctx1.textAlign = "left"; 
+            ctx1.fillText(datosEvento.mes.toUpperCase(), cx + (cv1.width * 0.12), yFecha);
+            
+            ctx1.beginPath(); ctx1.lineWidth = 2; ctx1.strokeStyle = "#926F34"; 
+            let lineH = cv1.height * 0.04;
+            ctx1.moveTo(cx - (cv1.width * 0.08), yFecha - lineH); ctx1.lineTo(cx - (cv1.width * 0.08), yFecha + 5);
+            ctx1.moveTo(cx + (cv1.width * 0.08), yFecha - lineH); ctx1.lineTo(cx + (cv1.width * 0.08), yFecha + 5); ctx1.stroke();
+            
+            ctx1.textAlign = "center"; ctx1.font = "bold " + (cv1.height * 0.025) + "px Arial"; 
+            ctx1.fillText("HORA: " + datosEvento.hora, cv1.width / 2, cv1.height * 0.78);
+            ctx1.font = (cv1.height * 0.035) + "px Arial"; 
+            ctx1.fillText("MESA: " + mesa, cv1.width / 2, cv1.height * 0.83);
+
+            // PÁGINA 2: PASE DIGITAL
+            const cv2 = document.getElementById('canvasPase');
+            const ctx2 = cv2.getContext('2d');
+            cv2.width = img.width; cv2.height = img.height;
+            ctx2.drawImage(img, 0, 0); 
+            
+            const margin = 0.05; 
+            const boxX = cv2.width * margin; const boxY = cv2.height * margin;
+            const boxW = cv2.width * (1 - (margin * 2)); const boxH = cv2.height * 0.82; 
+            
+            ctx2.fillStyle = "#ffffff"; ctx2.fillRect(boxX, boxY, boxW, boxH);
+            ctx2.strokeStyle = "#926F34"; ctx2.lineWidth = 5; ctx2.strokeRect(boxX, boxY, boxW, boxH);
+
+            ctx2.fillStyle = "#926F34"; ctx2.textAlign = "center";
+            ctx2.font = "bold " + (cv2.height * 0.035) + "px Arial"; 
+            ctx2.fillText("ESTE ES TU PASE DIGITAL", cv2.width / 2, cv2.height * 0.20);
+            
+            // GENERAR QR
+            const qrContainer = document.getElementById("qrcode-temp");
+            qrContainer.innerHTML = "";
+            new QRCode(qrContainer, {
+                text: idAleatorio, 
+                width: 512, height: 512, 
+                colorDark : "#926F34", colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+
             setTimeout(() => {
-                pasesInfo.classList.add('scale-100', 'opacity-100');
-                document.getElementById('rsvp-container').scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 50);
+                const qrImg = qrContainer.querySelector('img') || qrContainer.querySelector('canvas');
+                if(qrImg) {
+                    const qrSize = cv2.width * 0.60; 
+                    const qrX = (cv2.width - qrSize) / 2;
+                    const qrY = cv2.height * 0.23; 
+                    ctx2.drawImage(qrImg, qrX, qrY, qrSize, qrSize);
+
+                    const yTextoPersonas = qrY + qrSize + (cv2.height * 0.05);
+                    ctx2.font = "bold " + (cv2.height * 0.030) + "px Arial";
+                    ctx2.fillText(`ACCESO: ${invitaciones} PERSONAS`, cv2.width / 2, yTextoPersonas);
+                }
+
+                try {
+                    const doc = new jsPDF({ orientation: cv1.width > cv1.height ? 'l' : 'p', unit: 'px', format: [cv1.width, cv1.height] });
+                    doc.addImage(cv1.toDataURL("image/jpeg", 0.90), 'JPEG', 0, 0, cv1.width, cv1.height);
+                    doc.addPage([cv1.width, cv1.height]); 
+                    doc.addImage(cv2.toDataURL("image/jpeg", 0.90), 'JPEG', 0, 0, cv2.width, cv2.height);
+                    doc.save(`Invitacion_${inputFamilia}.pdf`);
+                    
+                    btn.disabled = false;
+                    btn.innerText = "Descargar Invitación + Pase";
+                } catch (e) { 
+                    alert("Error al generar PDF. Asegúrate de usar un servidor local (Live Server)."); 
+                    btn.disabled = false;
+                    btn.innerText = "Descargar Invitación + Pase";
+                }
+            }, 500);
         };
+        img.onerror = function() { alert("No se pudo cargar Fondo.jpg. Verifica que el archivo esté en la misma carpeta."); };
+    }
+</script>
 
-        weddingForm.onsubmit = async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('submitBtn');
-            const asistenciaVal = document.getElementById('asistencia').value;
-            btn.innerText = "PROCESANDO...";
-            btn.disabled = true;
-
-            const pasesReal = (asistenciaVal === "Cancelado") ? 0 : parseInt(pasesConfirmSelect.value);
-
-            // Operación 1: Insertar en confirmaciones
-            const { error: errorConfirm } = await _supabase
-                .from('confirmaciones')
-                .insert([{ fam_nombre: nombreSelect.value, asistencia: asistenciaVal, pases_confirmados: pasesReal }]);
-
-            // Operación 2: Actualizar tabla invitados
-            // Aquí se cambia el estado a 'CANCELADO' solo si el valor es 'Cancelado'
-            const { error: errorInvitado } = await _supabase
-                .from('invitados')
-                .update({ 
-                    num_invitados_confirmados: pasesReal,
-                    confirmado: 1,
-                    estado: (asistenciaVal === "Cancelado") ? "CANCELADO" : "Confirmado"
-                })
-                .eq('fam_nombre', nombreSelect.value)
-                .eq('boda_slug', 'MILLER');
-
-            if (!errorConfirm && !errorInvitado) {
-                weddingForm.style.display = 'none';
-                document.getElementById('successMessage').classList.remove('hidden');
-            } else {
-                console.error("Error:", errorConfirm || errorInvitado);
-                alert("Error al enviar los datos.");
-                btn.disabled = false;
-                btn.innerText = "CONFIRMAR ASISTENCIA";
-            }
-        };
-
-        function startInvitation() {
-            document.getElementById('overlay').classList.add('invisible');
-            setTimeout(() => {
-                document.getElementById('mainContent').classList.remove('opacity-0');
-                document.getElementById('muteBtn').classList.remove('hidden');
-                audio.play().catch(() => {});
-                AOS.refresh();
-            }, 800);
-        }
-
-        function toggleMusic() {
-            audio.paused ? audio.play() : audio.pause();
-        }
-
-        init();
-    </script>
 </body>
 </html>
