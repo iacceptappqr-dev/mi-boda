@@ -7,6 +7,7 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -14,18 +15,28 @@
     <style>
         body { font-family: 'Montserrat', sans-serif; scroll-behavior: smooth; }
         .font-floral { font-family: 'Great Vibes', cursive; }
-        .bg-cream { background-color: #fcfaf7; }
+        .font-serif-title { font-family: 'Cinzel', serif; }
         
+        /* Nuevo fondo azulado muy suave */
+        .bg-blue-light { background-color: #f0f4f8; }
+        .bg-blue-medium { background-color: #e3e9ef; }
+        
+        /* Colores de texto personalizados */
+        .text-blue-deep { color: #2c3e50; } /* Azul oscuro elegante */
+        .text-blue-dusty { color: #5d737e; } /* Azul acero */
+        .text-gold { color: #947c53; } /* Dorado para acentos */
+
         .glass-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
         }
 
         .input-wedding {
             width: 100%;
             background-color: transparent;
-            border-bottom: 2px solid #e5e7eb;
+            border-bottom: 2px solid #cbd5e1; /* Slate 300 */
             padding: 1rem 0;
             outline: none;
             transition: all 0.4s ease;
@@ -33,12 +44,13 @@
             border-radius: 0;
             -webkit-appearance: none;
             appearance: none;
+            color: #2c3e50;
         }
         
-        .input-wedding:focus { border-bottom-color: #4b5563; }
+        .input-wedding:focus { border-bottom-color: #6b8c96; }
 
         select.input-wedding {
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b8c96'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: right 0.5rem center;
             background-size: 1.1em;
@@ -48,7 +60,9 @@
         .btn-elegant {
             transition: all 0.3s ease;
             letter-spacing: 0.2em;
+            background-color: #6b8c96; /* Azul empolvado */
         }
+        .btn-elegant:hover { background-color: #4a6fa5; }
         .btn-elegant:active { transform: scale(0.96); }
 
         #overlay.invisible { opacity: 0; pointer-events: none; }
@@ -61,7 +75,7 @@
             top: -1rem;
             height: 1rem;
             width: 1px;
-            background-color: #e5e7eb;
+            background-color: #cbd5e1;
         }
         .timeline-item:first-child::before { display: none; }
 
@@ -72,18 +86,18 @@
         }
         .carousel-slide {
             min-width: 100%;
-            height: 500px; /* Altura fija para fotos */
+            height: 500px;
             object-fit: cover;
         }
     </style>
 </head>
-<body class="bg-cream text-gray-800 overflow-x-hidden">
+<body class="bg-blue-light text-slate-700 overflow-x-hidden">
 
     <div id="overlay" class="fixed inset-0 z-[60] flex flex-col items-center justify-center bg-white transition-all duration-1000">
         <div class="text-center px-6" data-aos="fade-up">
-            <h1 class="text-6xl md:text-8xl font-floral mb-6 text-stone-800">Ruby & Pablo</h1>
-            <div class="w-16 h-px bg-stone-300 mx-auto mb-10"></div>
-            <button onclick="startInvitation()" class="px-10 py-4 border border-stone-800 text-stone-800 uppercase text-xs tracking-[0.3em] hover:bg-stone-800 hover:text-white transition-all duration-500">
+            <h1 class="text-6xl md:text-8xl font-floral mb-6 text-blue-deep">Ruby & Pablo</h1>
+            <div class="w-16 h-px bg-slate-300 mx-auto mb-10"></div>
+            <button onclick="startInvitation()" class="px-10 py-4 border border-slate-600 text-slate-700 uppercase text-xs tracking-[0.3em] hover:bg-slate-700 hover:text-white transition-all duration-500">
                 Abrir Invitación
             </button>
         </div>
@@ -91,59 +105,59 @@
 
     <main id="mainContent" class="opacity-0 transition-opacity duration-1000">
         
-        <section class="h-screen flex items-center justify-center bg-cover bg-center relative" style="background-image: url('https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=2069');">
-            <div class="absolute inset-0 bg-black/40"></div>
+        <section class="h-screen flex items-center justify-center bg-cover bg-center relative" style="background-image: url('https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?q=80&w=2069');">
+            <div class="absolute inset-0 bg-slate-900/30"></div> 
             <div class="relative text-center text-white px-4">
-                <p class="uppercase tracking-[0.4em] text-[10px] mb-4" data-aos="fade-down">Nuestra Boda</p>
-                <h2 class="text-7xl md:text-9xl font-floral mb-4" data-aos="zoom-in">Ruby & Pablo</h2>
-                <div class="w-12 h-px bg-white/50 mx-auto my-6"></div>
-                <p class="text-lg tracking-widest font-light" data-aos="fade-up">24 . OCTUBRE . 2026</p>
+                <p class="uppercase tracking-[0.4em] text-[12px] mb-4 text-blue-100" data-aos="fade-down">Nuestra Boda</p>
+                <h2 class="text-7xl md:text-9xl font-floral mb-4 drop-shadow-lg" data-aos="zoom-in">Ruby & Pablo</h2>
+                <div class="w-12 h-px bg-white/70 mx-auto my-6"></div>
+                <p class="text-xl tracking-widest font-serif-title" data-aos="fade-up">24 · OCTUBRE · 2026</p>
             </div>
         </section>
 
         <section class="py-20 px-4 bg-white">
             <div class="max-w-3xl mx-auto text-center" data-aos="fade-up">
-                <i data-lucide="heart" class="w-8 h-8 mx-auto text-stone-400 mb-6"></i>
-                <h3 class="font-floral text-5xl text-stone-800 mb-8">Nuestra Historia</h3>
-                <p class="text-stone-600 leading-loose font-light text-sm md:text-base italic">
+                <i data-lucide="heart" class="w-8 h-8 mx-auto text-blue-dusty mb-6"></i>
+                <h3 class="font-floral text-6xl text-blue-deep mb-8">Nuestra Historia</h3>
+                <p class="text-slate-600 leading-loose font-light text-sm md:text-base italic">
                     "El amor no se trata de cuántos días, meses o años hemos estado juntos. Se trata de cuánto nos amamos cada día. Queremos compartir con ustedes el inicio de esta nueva aventura, rodeados de las personas que más queremos."
                 </p>
-                <p class="mt-4 text-stone-800 font-semibold uppercase text-xs tracking-widest">¡Gracias por ser parte de nuestra vida!</p>
+                <p class="mt-6 text-gold font-semibold uppercase text-xs tracking-widest">¡Gracias por ser parte de nuestra vida!</p>
             </div>
         </section>
 
-        <section class="py-10 bg-stone-50" data-aos="fade-up">
+        <section class="py-12 bg-blue-medium" data-aos="fade-up">
             <div class="max-w-4xl mx-auto relative group">
-                <div class="overflow-hidden rounded-xl shadow-2xl relative h-[500px]">
+                <div class="overflow-hidden rounded-xl shadow-2xl relative h-[500px] border-4 border-white">
                     <div class="carousel-track" id="track">
                         <img src="https://images.unsplash.com/photo-1606216794074-735e91aa2c92?q=80&w=1000" class="carousel-slide" alt="Foto Pareja 1">
                         <img src="https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?q=80&w=1000" class="carousel-slide" alt="Foto Pareja 2">
                         <img src="https://images.unsplash.com/photo-1621621667797-e06afc217fb0?q=80&w=1000" class="carousel-slide" alt="Foto Pareja 3">
                     </div>
                     
-                    <button onclick="prevSlide()" class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/30 backdrop-blur hover:bg-white p-2 rounded-full text-stone-800 transition">
+                    <button onclick="prevSlide()" class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/50 backdrop-blur hover:bg-white p-2 rounded-full text-slate-800 transition">
                         <i data-lucide="chevron-left"></i>
                     </button>
-                    <button onclick="nextSlide()" class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/30 backdrop-blur hover:bg-white p-2 rounded-full text-stone-800 transition">
+                    <button onclick="nextSlide()" class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/50 backdrop-blur hover:bg-white p-2 rounded-full text-slate-800 transition">
                         <i data-lucide="chevron-right"></i>
                     </button>
                 </div>
             </div>
         </section>
 
-        <section class="py-20 px-4 bg-white">
+        <section class="py-24 px-4 bg-white">
             <div class="max-w-4xl mx-auto text-center" data-aos="fade-up">
-                <span class="uppercase tracking-[0.3em] text-xs text-stone-500 block mb-4">Ceremonia y Recepción</span>
-                <h3 class="font-floral text-6xl text-stone-800 mb-10">Ubicación</h3>
+                <span class="uppercase tracking-[0.3em] text-xs text-blue-dusty block mb-4">Ceremonia y Recepción</span>
+                <h3 class="font-floral text-6xl text-blue-deep mb-10">Ubicación</h3>
                 
-                <div class="glass-card rounded-3xl p-8 md:p-12 shadow-xl border border-stone-100">
+                <div class="glass-card rounded-3xl p-8 md:p-12 shadow-xl">
                     <div class="space-y-6">
-                        <i data-lucide="map-pin" class="w-10 h-10 mx-auto text-stone-700"></i>
+                        <i data-lucide="map-pin" class="w-10 h-10 mx-auto text-blue-dusty"></i>
                         <div>
-                            <h4 class="text-xl font-semibold text-stone-800 uppercase tracking-widest mb-2">Hacienda Las Nubes</h4>
-                            <p class="text-stone-500 font-light italic">Carretera Nacional Km 25, Santiago, N.L.</p>
+                            <h4 class="text-2xl font-serif-title text-blue-deep mb-2">Hacienda Las Nubes</h4>
+                            <p class="text-slate-500 font-light italic">Carretera Nacional Km 25, Santiago, N.L.</p>
                         </div>
-                        <a href="https://maps.app.goo.gl/ZDJg1F8UfZBtcBRj9" target="_blank" class="inline-block btn-elegant bg-stone-800 text-white px-10 py-4 rounded-full text-[10px] uppercase tracking-[0.2em] shadow-lg hover:bg-stone-700 hover:shadow-xl mt-4">
+                        <a href="https://maps.app.goo.gl/ZDJg1F8UfZBtcBRj9" target="_blank" class="inline-block btn-elegant text-white px-10 py-4 rounded-full text-[10px] uppercase tracking-[0.2em] shadow-lg hover:shadow-xl mt-4">
                             Ver Mapa
                         </a>
                     </div>
@@ -151,89 +165,96 @@
             </div>
         </section>
 
-        <section class="py-16 px-4 bg-stone-50">
+        <section class="py-20 px-4 bg-blue-light">
             <div class="max-w-5xl mx-auto" data-aos="fade-up">
                 <div class="text-center mb-12">
-                    <h3 class="font-floral text-5xl text-stone-800 mb-4">Hospedaje Sugerido</h3>
-                    <p class="text-xs text-stone-500 uppercase tracking-widest">Opciones cercanas al evento</p>
+                    <h3 class="font-floral text-5xl text-blue-deep mb-4">Hospedaje Sugerido</h3>
+                    <p class="text-xs text-slate-500 uppercase tracking-widest">Opciones cercanas al evento</p>
                 </div>
 
                 <div class="grid md:grid-cols-2 gap-8">
-                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-stone-100 text-center">
-                        <h4 class="font-serif text-xl text-stone-800 mb-2">Hotel Real de Santiago</h4>
-                        <p class="text-sm text-stone-500 mb-4 italic">A 10 minutos del salón</p>
-                        <div class="flex justify-center gap-4">
-                            <span class="text-xs bg-stone-100 px-3 py-1 rounded-full text-stone-600">★★★★</span>
+                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-blue-100 text-center hover:shadow-md transition">
+                        <h4 class="font-serif-title text-lg text-blue-deep mb-2">Hotel Real de Santiago</h4>
+                        <p class="text-sm text-slate-500 mb-4 italic">A 10 minutos del salón</p>
+                        <div class="flex justify-center gap-1 text-gold mb-6">
+                            <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+                            <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+                            <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+                            <i data-lucide="star" class="w-3 h-3 fill-current"></i>
                         </div>
-                        <a href="#" class="mt-6 inline-block text-[10px] uppercase tracking-widest text-stone-800 border-b border-stone-800 pb-1 hover:text-stone-500 hover:border-stone-500 transition">Reservar</a>
+                        <a href="#" class="text-[10px] uppercase tracking-widest text-blue-dusty border-b border-blue-dusty pb-1 hover:text-blue-deep hover:border-blue-deep transition">Reservar</a>
                     </div>
-                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-stone-100 text-center">
-                        <h4 class="font-serif text-xl text-stone-800 mb-2">Gamma Monterrey</h4>
-                        <p class="text-sm text-stone-500 mb-4 italic">A 15 minutos del salón</p>
-                        <div class="flex justify-center gap-4">
-                            <span class="text-xs bg-stone-100 px-3 py-1 rounded-full text-stone-600">★★★★★</span>
+                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-blue-100 text-center hover:shadow-md transition">
+                        <h4 class="font-serif-title text-lg text-blue-deep mb-2">Gamma Monterrey</h4>
+                        <p class="text-sm text-slate-500 mb-4 italic">A 15 minutos del salón</p>
+                        <div class="flex justify-center gap-1 text-gold mb-6">
+                            <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+                            <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+                            <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+                            <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+                            <i data-lucide="star" class="w-3 h-3 fill-current"></i>
                         </div>
-                        <a href="#" class="mt-6 inline-block text-[10px] uppercase tracking-widest text-stone-800 border-b border-stone-800 pb-1 hover:text-stone-500 hover:border-stone-500 transition">Reservar</a>
+                        <a href="#" class="text-[10px] uppercase tracking-widest text-blue-dusty border-b border-blue-dusty pb-1 hover:text-blue-deep hover:border-blue-deep transition">Reservar</a>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="py-16 px-4 bg-white border-t border-stone-100">
+        <section class="py-20 px-4 bg-white border-t border-slate-100">
             <div class="max-w-md mx-auto text-center" data-aos="fade-up">
                 <div class="mb-6">
-                    <i data-lucide="shirt" class="w-10 h-10 mx-auto text-stone-800"></i>
+                    <i data-lucide="shirt" class="w-12 h-12 mx-auto text-blue-deep"></i>
                 </div>
-                <h3 class="font-floral text-5xl text-stone-800 mb-4">Código de Vestimenta</h3>
-                <div class="w-8 h-px bg-stone-400 mx-auto mb-4"></div>
-                <p class="text-xl uppercase tracking-[0.3em] text-stone-800 font-semibold mb-2">Formal</p>
-                <p class="text-xs text-stone-500 italic">Traje y Vestido Largo / Cocktail</p>
+                <h3 class="font-floral text-5xl text-blue-deep mb-4">Código de Vestimenta</h3>
+                <div class="w-8 h-px bg-gold mx-auto mb-4"></div>
+                <p class="text-2xl font-serif-title text-gold mb-2">FORMAL</p>
+                <p class="text-sm text-slate-500 italic">Traje y Vestido Largo / Cocktail</p>
             </div>
         </section>
 
-        <section class="py-24 px-4 bg-cream">
+        <section class="py-24 px-4 bg-blue-light">
             <div class="max-w-2xl mx-auto" data-aos="fade-up">
-                <h3 class="font-floral text-6xl text-center text-stone-800 mb-16">Itinerario</h3>
+                <h3 class="font-floral text-6xl text-center text-blue-deep mb-16">Itinerario</h3>
 
                 <div class="text-center mb-12">
-                    <h4 class="inline-block text-[10px] uppercase tracking-[0.3em] text-stone-500 border-b border-stone-300 pb-2 mb-10">Tarde: El Compromiso</h4>
+                    <h4 class="inline-block text-[10px] uppercase tracking-[0.3em] text-blue-dusty border-b border-blue-200 pb-2 mb-10">Tarde: El Compromiso</h4>
                     <div class="space-y-12 relative">
                         <div class="timeline-item relative">
-                            <span class="block text-2xl font-serif text-stone-800 mb-1">17:00</span>
-                            <span class="block text-xs uppercase tracking-widest font-bold text-stone-600 mb-1">Ceremonia</span>
-                            <p class="text-xs text-stone-400 italic">El momento del "sí, acepto"</p>
+                            <span class="block text-2xl font-serif-title text-blue-deep mb-1">17:00</span>
+                            <span class="block text-xs uppercase tracking-widest font-bold text-slate-600 mb-1">Ceremonia</span>
+                            <p class="text-xs text-slate-400 italic">El momento del "sí, acepto"</p>
                         </div>
                         <div class="timeline-item relative pt-4">
-                            <span class="block text-2xl font-serif text-stone-800 mb-1">18:00</span>
-                            <span class="block text-xs uppercase tracking-widest font-bold text-stone-600 mb-1">Cóctel</span>
-                            <p class="text-xs text-stone-400 italic">Bebidas y fotos</p>
+                            <span class="block text-2xl font-serif-title text-blue-deep mb-1">18:00</span>
+                            <span class="block text-xs uppercase tracking-widest font-bold text-slate-600 mb-1">Cóctel</span>
+                            <p class="text-xs text-slate-400 italic">Bebidas y fotos</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="text-center">
-                    <h4 class="inline-block text-[10px] uppercase tracking-[0.3em] text-stone-500 border-b border-stone-300 pb-2 mb-10 mt-4">Noche: La Celebración</h4>
+                    <h4 class="inline-block text-[10px] uppercase tracking-[0.3em] text-blue-dusty border-b border-blue-200 pb-2 mb-10 mt-4">Noche: La Celebración</h4>
                     <div class="space-y-12">
                         <div class="timeline-item relative">
-                            <span class="block text-2xl font-serif text-stone-800 mb-1">19:00</span>
-                            <span class="block text-xs uppercase tracking-widest font-bold text-stone-600 mb-1">Entrada y Cena</span>
-                            <p class="text-xs text-stone-400 italic">Ingreso al salón</p>
+                            <span class="block text-2xl font-serif-title text-blue-deep mb-1">19:00</span>
+                            <span class="block text-xs uppercase tracking-widest font-bold text-slate-600 mb-1">Entrada y Cena</span>
+                            <p class="text-xs text-slate-400 italic">Ingreso al salón</p>
                         </div>
                         <div class="timeline-item relative pt-4">
-                            <span class="block text-2xl font-serif text-stone-800 mb-1">20:30</span>
-                            <span class="block text-xs uppercase tracking-widest font-bold text-stone-600 mb-1">Brindis</span>
+                            <span class="block text-2xl font-serif-title text-blue-deep mb-1">20:30</span>
+                            <span class="block text-xs uppercase tracking-widest font-bold text-slate-600 mb-1">Brindis</span>
                         </div>
                         <div class="timeline-item relative pt-4">
-                            <span class="block text-2xl font-serif text-stone-800 mb-1">21:00</span>
-                            <span class="block text-xs uppercase tracking-widest font-bold text-stone-600 mb-1">El Baile</span>
+                            <span class="block text-2xl font-serif-title text-blue-deep mb-1">21:00</span>
+                            <span class="block text-xs uppercase tracking-widest font-bold text-slate-600 mb-1">El Baile</span>
                         </div>
                         <div class="timeline-item relative pt-4">
-                            <span class="block text-2xl font-serif text-stone-800 mb-1">21:30</span>
-                            <span class="block text-xs uppercase tracking-widest font-bold text-stone-600 mb-1">¡Fiesta!</span>
+                            <span class="block text-2xl font-serif-title text-blue-deep mb-1">21:30</span>
+                            <span class="block text-xs uppercase tracking-widest font-bold text-slate-600 mb-1">¡Fiesta!</span>
                         </div>
                         <div class="timeline-item relative pt-4">
-                            <span class="block text-2xl font-serif text-stone-800 mb-1">00:00</span>
-                            <span class="block text-xs uppercase tracking-widest font-bold text-stone-600 mb-1">El Final</span>
+                            <span class="block text-2xl font-serif-title text-blue-deep mb-1">00:00</span>
+                            <span class="block text-xs uppercase tracking-widest font-bold text-slate-600 mb-1">El Final</span>
                         </div>
                     </div>
                 </div>
@@ -241,43 +262,49 @@
         </section>
 
         <section class="py-20 px-4 bg-white" data-aos="fade-up">
-            <div class="max-w-3xl mx-auto text-center border-y border-stone-200 py-10">
-                <h3 class="font-floral text-5xl text-stone-800 mb-8">Menú</h3>
+            <div class="max-w-3xl mx-auto text-center border-y border-slate-100 py-12">
+                <h3 class="font-floral text-5xl text-blue-deep mb-10">Menú</h3>
                 
-                <div class="grid md:grid-cols-2 gap-10">
-                    <div class="space-y-2">
-                        <span class="text-[10px] uppercase tracking-[0.3em] text-stone-400">Primer Tiempo</span>
-                        <h4 class="font-serif text-lg text-stone-800 font-semibold">Crema de Alcachofa</h4>
-                        <p class="text-sm text-stone-500 italic">Con crujiente de jamón serrano y aceite de trufa</p>
+                <div class="grid md:grid-cols-2 gap-12">
+                    <div class="space-y-3">
+                        <span class="text-[10px] uppercase tracking-[0.3em] text-gold font-bold">Primer Tiempo</span>
+                        <h4 class="font-serif-title text-lg text-blue-deep">Crema de Alcachofa</h4>
+                        <p class="text-sm text-slate-500 italic">Con crujiente de jamón serrano y aceite de trufa</p>
                     </div>
                     
-                    <div class="space-y-2">
-                        <span class="text-[10px] uppercase tracking-[0.3em] text-stone-400">Segundo Tiempo</span>
-                        <h4 class="font-serif text-lg text-stone-800 font-semibold">Filete Mignon en Salsa de Oporto</h4>
-                        <p class="text-sm text-stone-500 italic">Acompañado de puré de papa rústico y espárragos</p>
+                    <div class="space-y-3">
+                        <span class="text-[10px] uppercase tracking-[0.3em] text-gold font-bold">Segundo Tiempo</span>
+                        <h4 class="font-serif-title text-lg text-blue-deep">Filete Mignon en Salsa de Oporto</h4>
+                        <p class="text-sm text-slate-500 italic">Acompañado de puré de papa rústico y espárragos</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="py-16 px-4 bg-stone-50" data-aos="fade-up">
+        <section class="py-20 px-4 bg-blue-light" data-aos="fade-up">
             <div class="max-w-4xl mx-auto text-center">
-                <i data-lucide="gift" class="w-10 h-10 mx-auto text-stone-700 mb-4"></i>
-                <h3 class="font-floral text-5xl text-stone-800 mb-4">Mesa de Regalos</h3>
-                <p class="text-stone-500 mb-10 text-sm">Su presencia es nuestro mejor regalo, pero si desean tener un detalle con nosotros:</p>
+                <i data-lucide="gift" class="w-10 h-10 mx-auto text-blue-dusty mb-4"></i>
+                <h3 class="font-floral text-5xl text-blue-deep mb-4">Mesa de Regalos</h3>
+                <p class="text-slate-500 mb-12 text-sm max-w-lg mx-auto">Su presencia es nuestro mejor regalo, pero si desean tener un detalle con nosotros:</p>
                 
                 <div class="grid md:grid-cols-2 gap-6">
-                    <div class="bg-white p-8 rounded-xl shadow-sm">
-                        <h4 class="uppercase tracking-widest text-xs font-bold text-stone-800 mb-4">Transferencia / Sobre</h4>
-                        <p class="text-stone-600 text-sm">Banco: BBVA</p>
-                        <p class="text-stone-600 text-sm">CLABE: 1234 5678 9012 3456</p>
-                        <p class="text-stone-600 text-sm">Nombre: Pablo Martinez</p>
+                    <div class="bg-white p-8 rounded-xl shadow-sm border border-slate-100">
+                        <h4 class="uppercase tracking-widest text-xs font-bold text-blue-deep mb-4">Transferencia / Sobre</h4>
+                        <p class="text-slate-600 text-sm font-mono bg-slate-50 p-2 rounded mb-2">Banco: BBVA</p>
+                        <p class="text-slate-600 text-sm font-mono bg-slate-50 p-2 rounded mb-2">CLABE: 1234 5678 9012 3456</p>
+                        <p class="text-slate-500 text-xs mt-2">A nombre de: Pablo Martinez</p>
                     </div>
-                    <div class="bg-white p-8 rounded-xl shadow-sm flex flex-col justify-center items-center">
-                        <h4 class="uppercase tracking-widest text-xs font-bold text-stone-800 mb-4">Mesas Registradas</h4>
-                        <div class="flex gap-4">
-                            <span class="px-4 py-2 border border-stone-200 rounded text-xs text-stone-600">Liverpool: #998877</span>
-                            <span class="px-4 py-2 border border-stone-200 rounded text-xs text-stone-600">Amazon</span>
+                    <div class="bg-white p-8 rounded-xl shadow-sm border border-slate-100 flex flex-col justify-center items-center">
+                        <h4 class="uppercase tracking-widest text-xs font-bold text-blue-deep mb-6">Mesas Registradas</h4>
+                        <div class="flex flex-col gap-3 w-full">
+                            <div class="flex items-center justify-between px-4 py-3 border border-pink-100 bg-pink-50/30 rounded text-xs text-slate-600">
+                                <span class="font-bold text-pink-400">Liverpool</span>
+                                <span>#998877</span>
+                            </div>
+                            <div class="flex items-center justify-between px-4 py-3 border border-orange-100 bg-orange-50/30 rounded text-xs text-slate-600">
+                                <span class="font-bold text-orange-400">Amazon</span>
+                                <span>Buscar por Nombres</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -285,46 +312,48 @@
         </section>
 
         <section class="py-24 px-4 md:px-6 bg-white"> 
-            <div id="rsvp-container" class="max-w-xl mx-auto glass-card rounded-3xl p-8 md:p-12 shadow-2xl border border-stone-100" data-aos="fade-up">
-                <h3 class="font-floral text-center text-6xl mb-4 text-stone-800">Confirmación</h3>
+            <div id="rsvp-container" class="max-w-xl mx-auto glass-card rounded-3xl p-8 md:p-12" data-aos="fade-up">
+                <h3 class="font-floral text-center text-6xl mb-4 text-blue-deep">Confirmación</h3>
+                <p class="text-center text-slate-500 text-xs uppercase tracking-widest mb-10">Por favor confirma tu asistencia antes del 10 de Octubre</p>
+                
                 <form id="weddingForm" class="space-y-10">
                     <div class="relative">
-                        <label class="text-[9px] uppercase tracking-widest text-stone-400 absolute -top-4">Busca tu nombre</label>
+                        <label class="text-[9px] uppercase tracking-widest text-blue-dusty absolute -top-4 font-bold">Busca tu nombre</label>
                         <select id="nombreSelect" required class="input-wedding">
                             <option value="" disabled selected>Cargando lista MILLER...</option>
                         </select>
                     </div>
 
                     <div id="pasesInfo" class="hidden transform transition-all duration-500 scale-95 opacity-0">
-                        <div class="text-center py-8 bg-stone-50 rounded-2xl border border-stone-100 px-6">
-                            <p class="text-xs text-stone-400 uppercase tracking-widest mb-2">Hola <span id="guestName" class="text-stone-800 font-semibold"></span></p>
-                            <p class="text-sm text-stone-500 font-light italic">Tienes <span id="guestPases">0</span> pases reservados.</p>
+                        <div class="text-center py-8 bg-blue-50 rounded-2xl border border-blue-100 px-6">
+                            <p class="text-xs text-slate-400 uppercase tracking-widest mb-2">Hola <span id="guestName" class="text-blue-deep font-semibold"></span></p>
+                            <p class="text-sm text-slate-500 font-light italic">Tienes <span id="guestPases" class="font-bold text-blue-deep">0</span> pases reservados.</p>
                             <div class="mt-6">
-                                <label class="text-[10px] uppercase tracking-widest text-stone-500 block mb-2">¿Cuántos asistirán?</label>
-                                <select id="pasesConfirmadosSelect" class="input-wedding !text-center !border-stone-300"></select>
+                                <label class="text-[10px] uppercase tracking-widest text-slate-500 block mb-2">¿Cuántos asistirán?</label>
+                                <select id="pasesConfirmadosSelect" class="input-wedding !text-center !border-blue-200"></select>
                             </div>
                         </div>
                     </div>
 
                     <div class="relative">
-                        <label class="text-[9px] uppercase tracking-widest text-stone-400 absolute -top-4">¿Nos acompañan?</label>
+                        <label class="text-[9px] uppercase tracking-widest text-blue-dusty absolute -top-4 font-bold">¿Nos acompañan?</label>
                         <select id="asistencia" name="asistencia" class="input-wedding">
                             <option value="Confirmado">¡Sí, ahí estaremos!</option>
                             <option value="Cancelado">Lamentablemente no puedo</option>
                         </select>
                     </div>
 
-                    <button type="submit" id="submitBtn" class="btn-elegant w-full bg-stone-800 text-white py-5 rounded-full text-[10px] uppercase tracking-[0.3em] shadow-xl shadow-stone-200">
+                    <button type="submit" id="submitBtn" class="btn-elegant w-full text-white py-5 rounded-full text-[10px] uppercase tracking-[0.3em] shadow-xl shadow-blue-100">
                         Confirmar Asistencia
                     </button>
                 </form>
 
                 <div id="successMessage" class="hidden text-center py-16" data-aos="zoom-in">
-                    <div class="mb-6 text-stone-800">
-                        <i data-lucide="check-circle" class="w-12 h-12 mx-auto"></i>
+                    <div class="mb-6 text-green-500">
+                        <i data-lucide="check-circle" class="w-16 h-16 mx-auto"></i>
                     </div>
-                    <h4 class="font-floral text-5xl mb-4">¡Muchas Gracias!</h4>
-                    <p class="text-[10px] uppercase tracking-widest text-stone-400 leading-loose">Tu respuesta ha sido guardada con éxito.</p>
+                    <h4 class="font-floral text-5xl mb-4 text-blue-deep">¡Muchas Gracias!</h4>
+                    <p class="text-[10px] uppercase tracking-widest text-slate-400 leading-loose">Tu respuesta ha sido guardada con éxito.</p>
                 </div>
             </div>
         </section>
