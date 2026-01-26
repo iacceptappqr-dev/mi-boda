@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nuestra Boda | Ricardo & Verania</title>
+    <title>Nuestra Boda | Abner & Verania</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;600&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
@@ -78,16 +78,24 @@
         /* Cuadros de Cuenta Regresiva */
         .countdown-box {
             border: 1px solid var(--gold);
-            color: var(--gold); /* Texto dorado sobre fondo oscuro */
-            background: rgba(30, 58, 95, 0.8); /* Fondo azul semitransparente */
+            color: var(--gold);
+            background: rgba(30, 58, 95, 0.85);
             backdrop-filter: blur(4px);
-            border-radius: 4px;
-            width: 65px;
-            height: 75px;
+            border-radius: 6px;
+            width: 70px;
+            height: 80px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        
+        .hero-bg {
+            background-image: url('image_ee38c8.png'); /* TU FOTO DE PORTADA */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
     </style>
 </head>
@@ -95,7 +103,7 @@
 
     <div id="overlay" class="fixed inset-0 z-[60] flex flex-col items-center justify-center bg-white transition-all duration-1000">
         <div class="text-center px-6" data-aos="fade-up">
-            <h1 class="text-6xl md:text-8xl font-hand mb-4 text-navy">Ricardo & Verania</h1>
+            <h1 class="text-6xl md:text-8xl font-hand mb-4 text-navy">Abner & Verania</h1>
             <div class="w-20 h-0.5 bg-gold mx-auto mb-8"></div>
             <button onclick="startInvitation()" class="btn-navy px-10 py-3 rounded-sm text-xs">
                 Abrir Invitación
@@ -105,40 +113,40 @@
 
     <main id="mainContent" class="opacity-0 transition-opacity duration-1000">
         
-        <section class="h-screen flex flex-col items-center justify-center bg-cover bg-center relative" style="background-image: url('https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?q=80&w=2069');">
+        <section class="h-screen flex flex-col items-center justify-center relative hero-bg">
             <div class="absolute inset-0 bg-[#1e3a5f]/60"></div> 
 
             <div class="relative z-10 text-center text-white px-4" data-aos="fade-up">
-                <p class="uppercase tracking-[0.3em] text-xs mb-4 opacity-80">Nuestra Boda</p>
-                <h2 class="text-7xl md:text-9xl font-hand mb-6 drop-shadow-lg">Ricardo & Verania</h2>
+                <p class="uppercase tracking-[0.3em] text-xs mb-6 opacity-90 font-roman text-gold">Nuestra Boda</p>
+                <h2 class="text-7xl md:text-9xl font-hand mb-8 drop-shadow-2xl">Abner & Verania</h2>
                 
-                <div class="flex items-center justify-center gap-4 mb-10">
-                    <div class="h-px w-12 bg-gold"></div>
+                <div class="flex items-center justify-center gap-6 mb-12">
+                    <div class="h-px w-16 bg-gold"></div>
                     <p class="text-xl md:text-2xl tracking-[0.2em] font-roman text-white">21 · JUNIO · 2026</p>
-                    <div class="h-px w-12 bg-gold"></div>
+                    <div class="h-px w-16 bg-gold"></div>
                 </div>
 
-                <button onclick="addToCalendar()" class="btn-gold px-8 py-3 rounded shadow-lg flex items-center gap-3 mx-auto text-xs mb-12">
+                <button onclick="addToCalendar()" class="btn-gold px-10 py-4 rounded shadow-lg flex items-center gap-3 mx-auto text-xs mb-16 hover:scale-105 transform transition">
                     <i data-lucide="calendar-plus" class="w-4 h-4"></i>
                     Agendar Fecha
                 </button>
 
                 <div class="flex justify-center gap-4 text-center" id="countdown">
                     <div class="countdown-box">
-                        <span class="text-2xl font-bold font-roman" id="days">00</span>
-                        <span class="text-[8px] uppercase tracking-wider mt-1">Días</span>
+                        <span class="text-3xl font-bold font-roman" id="days">00</span>
+                        <span class="text-[9px] uppercase tracking-wider mt-1">Días</span>
                     </div>
                     <div class="countdown-box">
-                        <span class="text-2xl font-bold font-roman" id="hours">00</span>
-                        <span class="text-[8px] uppercase tracking-wider mt-1">Hrs</span>
+                        <span class="text-3xl font-bold font-roman" id="hours">00</span>
+                        <span class="text-[9px] uppercase tracking-wider mt-1">Hrs</span>
                     </div>
                     <div class="countdown-box">
-                        <span class="text-2xl font-bold font-roman" id="minutes">00</span>
-                        <span class="text-[8px] uppercase tracking-wider mt-1">Mins</span>
+                        <span class="text-3xl font-bold font-roman" id="minutes">00</span>
+                        <span class="text-[9px] uppercase tracking-wider mt-1">Mins</span>
                     </div>
                     <div class="countdown-box">
-                        <span class="text-2xl font-bold font-roman" id="seconds">00</span>
-                        <span class="text-[8px] uppercase tracking-wider mt-1">Segs</span>
+                        <span class="text-3xl font-bold font-roman" id="seconds">00</span>
+                        <span class="text-[9px] uppercase tracking-wider mt-1">Segs</span>
                     </div>
                 </div>
             </div>
@@ -159,7 +167,7 @@
                 <div class="overflow-hidden rounded-sm shadow-2xl relative h-[500px] border-[10px] border-white">
                     <div class="carousel-track flex transition-transform duration-500" id="track">
                         <img src="https://images.unsplash.com/photo-1606216794074-735e91aa2c92?q=80&w=1000" class="min-w-full h-[500px] object-cover" alt="Foto 1">
-                        <img src="https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?q=80&w=1000" class="min-w-full h-[500px] object-cover" alt="Foto 2">
+                        <img src="image.png" class="min-w-full h-[500px] object-cover" alt="Foto 2">
                         <img src="https://images.unsplash.com/photo-1621621667797-e06afc217fb0?q=80&w=1000" class="min-w-full h-[500px] object-cover" alt="Foto 3">
                     </div>
                     <button onclick="prevSlide()" class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/70 p-3 rounded-full text-navy hover:bg-white transition"><i data-lucide="chevron-left"></i></button>
@@ -172,7 +180,6 @@
             <div class="max-w-4xl mx-auto text-center" data-aos="fade-up">
                 <span class="uppercase tracking-[0.3em] text-xs text-gold font-bold block mb-4">Ceremonia y Recepción</span>
                 <h3 class="font-hand text-6xl text-navy mb-10">Ubicación</h3>
-                
                 <div class="glass-card rounded-xl p-10 md:p-14">
                     <div class="space-y-8">
                         <i data-lucide="map-pin" class="w-14 h-14 mx-auto text-navy"></i>
@@ -191,7 +198,6 @@
         <section class="py-24 px-4 bg-[#f4f8fb]">
             <div class="max-w-3xl mx-auto" data-aos="fade-up">
                 <h3 class="font-hand text-6xl text-center text-navy mb-20">Itinerario</h3>
-
                 <div class="relative border-l-2 border-gold ml-4 md:ml-auto md:mr-auto md:w-2/3 pl-8 md:pl-12">
                     <div class="mb-12 relative">
                         <div class="absolute -left-[41px] md:-left-[57px] top-2 w-4 h-4 rounded-full bg-gold border-4 border-[#f4f8fb]"></div>
@@ -267,7 +273,6 @@
                 <i data-lucide="gift" class="w-12 h-12 mx-auto text-gold mb-6"></i>
                 <h3 class="font-hand text-6xl text-navy mb-6">Mesa de Regalos</h3>
                 <p class="text-slate-600 mb-12 text-lg font-light">Su presencia es nuestro mejor regalo. Si desean tener un detalle con nosotros, les compartimos nuestras opciones:</p>
-                
                 <div class="grid md:grid-cols-2 gap-8">
                      <div class="bg-[#f4f8fb] p-8 rounded-lg border border-slate-200">
                         <h4 class="uppercase tracking-widest text-sm font-bold text-navy mb-6">Transferencia / Sobre</h4>
@@ -279,9 +284,8 @@
                              <p class="text-slate-500 text-xs uppercase mb-1">CLABE</p>
                              <p class="text-navy font-bold font-mono tracking-wider">1234 5678 9012 3456</p>
                         </div>
-                        <p class="text-xs text-slate-400 mt-4 text-right">A nombre de: Verania Martinez</p>
+                        <p class="text-xs text-slate-400 mt-4 text-right">A nombre de: Pablo Martinez</p>
                     </div>
-                    
                     <div class="flex flex-col justify-center gap-4">
                         <a href="#" class="flex items-center justify-between bg-white p-6 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition group">
                             <span class="font-roman text-navy text-lg group-hover:text-gold transition">Liverpool</span>
@@ -303,7 +307,7 @@
                 
                 <form id="weddingForm" class="space-y-10">
                     <div>
-                        <label class="text-[11px] uppercase tracking-widest text-gold font-bold block mb-3">Busca tu nombre</label>
+                        <label for="nombreSelect" class="text-[11px] uppercase tracking-widest text-gold font-bold block mb-3">Busca tu nombre</label>
                         <select id="nombreSelect" required class="input-wedding text-lg">
                             <option value="" disabled selected>Cargando lista...</option>
                         </select>
@@ -351,8 +355,8 @@
         // --- FUNCIÓN AGENDAR EN CALENDARIO (Google) ---
         function addToCalendar() {
             const event = {
-                title: "Boda Ricardo y Verania",
-                start: "20260621T170000", // Formato YYYYMMDDTHHMMSS
+                title: "Boda Abner y Verania",
+                start: "20260621T170000", 
                 end: "20260622T020000",
                 location: "Hacienda Las Nubes, Santiago NL",
                 details: "¡Los esperamos para celebrar nuestra boda!"
@@ -392,7 +396,7 @@
         setInterval(nextSlide, 4000);
         window.addEventListener('resize', updateCarousel);
 
-        // --- SUPABASE & LOGICA ---
+        // --- SUPABASE & LÓGICA PRINCIPAL ---
         const { createClient } = supabase;
         const _supabase = createClient('https://iqwkaorhtksudfspupzo.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlxd2thb3JodGtzdWRmc3B1cHpvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxMTQzNTUsImV4cCI6MjA4NDY5MDM1NX0.7vgdhkqHSFUDv6WrFE_5E40YfEh6CmGHovLOYkJ2sNw');
 
@@ -401,11 +405,71 @@
         const pasesInfo = document.getElementById('pasesInfo');
         const pasesConfirmSelect = document.getElementById('pasesConfirmadosSelect');
         const guestNameDisplay = document.getElementById('guestName');
+        
+        // Variable global para guardar los datos del invitado actual (necesario para el PDF)
+        let currentGuestData = null;
 
         async function init() {
+            const params = new URLSearchParams(window.location.search);
+            const invitadoId = params.get('id');
+
+            // ======================================================
+            // CASO A: SI HAY UN ID EN LA URL (Modo Invitado Único)
+            // ======================================================
+            if (invitadoId) {
+                console.log("Modo ID detectado:", invitadoId);
+                
+                const { data, error } = await _supabase
+                    .from('invitados')
+                    .select('*')
+                    .eq('id_invitado_firebase', invitadoId)
+                    .maybeSingle(); // Usamos maybeSingle para evitar errores si no hay resultados
+
+                if (error) {
+                    console.error("Error BD:", error);
+                    alert("Error al cargar la invitación.");
+                    return; // DETENER EJECUCIÓN
+                }
+
+                if (data) {
+                    // Limpiamos el select y ponemos SOLO a este invitado
+                    nombreSelect.innerHTML = '';
+                    let opt = document.createElement('option');
+                    opt.value = data.fam_nombre;
+                    opt.text = data.fam_nombre;
+                    opt.dataset.pases = data.num_invitados;
+                    // Guardamos todos los datos en el dataset para usarlos al generar PDF
+                    opt.dataset.full = JSON.stringify(data);
+                    nombreSelect.appendChild(opt);
+                    
+                    // Seleccionamos esta opción automáticamente
+                    nombreSelect.value = data.fam_nombre;
+
+                    // Disparamos manualmente la función de cambio para llenar la UI
+                    // (Esto llenará currentGuestData y mostrará los pases)
+                    nombreSelect.dispatchEvent(new Event('change'));
+                    
+                    // Bloqueamos el select para que no parezca que puede elegir otro
+                    nombreSelect.disabled = true;
+                    
+                    // Cambiamos el texto de la etiqueta
+                    const label = document.querySelector('label[for="nombreSelect"]');
+                    if(label) label.innerText = "Invitado Identificado:";
+                } else {
+                    alert("Invitación no encontrada o enlace inválido.");
+                }
+                
+                // *** IMPORTANTE: RETURN PARA QUE NO CARGUE LA LISTA COMPLETA ***
+                return; 
+            }
+
+            // ======================================================
+            // CASO B: NO HAY ID (Modo Lista Completa)
+            // ======================================================
+            console.log("Cargando lista completa...");
             const { data, error } = await _supabase
                 .from('invitados')
-                .select('fam_nombre, num_invitados, boda_slug, confirmado')
+                .select('*') // Traemos todo (*) para tener los datos listos para el PDF
                 .eq('boda_slug', 'MILLER')
                 .or('confirmado.is.null,confirmado.eq.0')
                 .order('fam_nombre', { ascending: true });
@@ -417,6 +481,7 @@
                     opt.value = inv.fam_nombre;
                     opt.text = inv.fam_nombre;
                     opt.dataset.pases = inv.num_invitados;
+                    opt.dataset.full = JSON.stringify(inv); // Guardamos datos para PDF
                     nombreSelect.appendChild(opt);
                 });
             }
@@ -424,15 +489,26 @@
 
         nombreSelect.onchange = (e) => {
             const selected = e.target.options[e.target.selectedIndex];
+            
+            // Recuperamos el objeto completo del invitado desde el dataset
+            if (selected.dataset.full) {
+                currentGuestData = JSON.parse(selected.dataset.full);
+            }
+
             const totalPases = parseInt(selected.dataset.pases);
             guestNameDisplay.innerText = selected.text;
             document.getElementById('guestPases').innerText = totalPases;
+            
             pasesConfirmSelect.innerHTML = '';
             for (let i = 1; i <= totalPases; i++) {
                 let opt = document.createElement('option');
                 opt.value = i; opt.text = i + (i === 1 ? " Persona" : " Personas");
                 pasesConfirmSelect.appendChild(opt);
             }
+            
+            // Seleccionar el máximo por defecto
+            pasesConfirmSelect.value = totalPases;
+            
             pasesInfo.classList.remove('hidden');
         };
 
@@ -442,15 +518,31 @@
             const asistenciaVal = document.getElementById('asistencia').value;
             btn.innerText = "ENVIANDO...";
             btn.disabled = true;
+
             const pasesReal = (asistenciaVal === "Cancelado") ? 0 : parseInt(pasesConfirmSelect.value);
-            const { error: errorConfirm } = await _supabase.from('confirmaciones').insert([{ fam_nombre: nombreSelect.value, asistencia: asistenciaVal, pases_confirmados: pasesReal }]);
-            const { error: errorInvitado } = await _supabase.from('invitados').update({ num_invitados_confirmados: pasesReal, confirmado: 1, estado: (asistenciaVal === "Cancelado") ? "CANCELADO" : "Confirmado" }).eq('fam_nombre', nombreSelect.value).eq('boda_slug', 'MILLER');
+
+            // 1. Guardar Confirmación
+            const { error: errorConfirm } = await _supabase
+                .from('confirmaciones')
+                .insert([{ fam_nombre: nombreSelect.value, asistencia: asistenciaVal, pases_confirmados: pasesReal }]);
+
+            // 2. Actualizar Invitado
+            const { error: errorInvitado } = await _supabase
+                .from('invitados')
+                .update({ 
+                    num_invitados_confirmados: pasesReal, 
+                    confirmado: 1, 
+                    estado: (asistenciaVal === "Cancelado") ? "CANCELADO" : "Confirmado" 
+                })
+                .eq('fam_nombre', nombreSelect.value)
+                .eq('boda_slug', 'MILLER');
 
             if (!errorConfirm && !errorInvitado) {
                 weddingForm.style.display = 'none';
                 document.getElementById('successMessage').classList.remove('hidden');
             } else {
-                alert("Error al enviar.");
+                console.error(errorConfirm, errorInvitado);
+                alert("Error al enviar la confirmación.");
                 btn.disabled = false;
                 btn.innerText = "ENVIAR CONFIRMACIÓN";
             }
