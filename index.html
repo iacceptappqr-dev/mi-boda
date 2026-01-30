@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nuestra Boda | Abner & Verania</title>
+    <title>Nuestra Boda | Invitación Digital</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;600&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
@@ -103,7 +103,7 @@
 
     <div id="overlay" class="fixed inset-0 z-[60] flex flex-col items-center justify-center bg-white transition-all duration-1000">
         <div class="text-center px-6" data-aos="fade-up">
-            <h1 class="text-6xl md:text-8xl font-hand mb-4 text-navy">Abner & Verania</h1>
+            <h1 class="text-6xl md:text-8xl font-hand mb-4 text-navy" id="overlayNames">Cargando evento...</h1>
             <div class="w-20 h-0.5 bg-gold mx-auto mb-8"></div>
             <button onclick="startInvitation()" class="btn-navy px-10 py-3 rounded-sm text-xs">
                 Abrir Invitación
@@ -118,11 +118,11 @@
 
             <div class="relative z-10 text-center text-white px-4" data-aos="fade-up">
                 <p class="uppercase tracking-[0.3em] text-xs mb-6 opacity-90 font-roman text-gold">Nuestra Boda</p>
-                <h2 class="text-7xl md:text-9xl font-hand mb-8 drop-shadow-2xl">Abner & Verania</h2>
+                <h2 class="text-7xl md:text-9xl font-hand mb-8 drop-shadow-2xl" id="heroNames"></h2>
                 
                 <div class="flex items-center justify-center gap-6 mb-12">
                     <div class="h-px w-16 bg-gold"></div>
-                    <p class="text-xl md:text-2xl tracking-[0.2em] font-roman text-white">21 · JUNIO · 2026</p>
+                    <p class="text-xl md:text-2xl tracking-[0.2em] font-roman text-white" id="heroDate">21 · JUNIO · 2026</p>
                     <div class="h-px w-16 bg-gold"></div>
                 </div>
 
@@ -352,149 +352,112 @@
         lucide.createIcons();
         AOS.init({ duration: 1000, once: true, offset: 100 });
 
-        // --- FUNCIÓN AGENDAR EN CALENDARIO (Google) ---
-        function addToCalendar() {
-            const event = {
-                title: "Boda Abner y Verania",
-                start: "20260621T170000", 
-                end: "20260622T020000",
-                location: "Hacienda Las Nubes, Santiago NL",
-                details: "¡Los esperamos para celebrar nuestra boda!"
-            };
-            const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${event.start}/${event.end}&details=${encodeURIComponent(event.details)}&location=${encodeURIComponent(event.location)}`;
-            window.open(googleUrl, '_blank');
-        }
-
-        // --- CUENTA REGRESIVA ---
-        const weddingDate = new Date("June 21, 2026 17:00:00").getTime();
-        const countdownTimer = setInterval(function() {
-            const now = new Date().getTime();
-            const distance = weddingDate - now;
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-            document.getElementById("days").innerText = days < 10 ? "0" + days : days;
-            document.getElementById("hours").innerText = hours < 10 ? "0" + hours : hours;
-            document.getElementById("minutes").innerText = minutes < 10 ? "0" + minutes : minutes;
-            document.getElementById("seconds").innerText = seconds < 10 ? "0" + seconds : seconds;
-
-            if (distance < 0) {
-                clearInterval(countdownTimer);
-                document.getElementById("countdown").innerHTML = "<div class='text-2xl text-white font-bold font-roman'>¡Hoy es el gran día!</div>";
-            }
-        }, 1000);
-
-        // --- CARRUSEL ---
-        let currentSlide = 0;
-        const track = document.getElementById('track');
-        const slides = document.querySelectorAll('.carousel-slide');
-        function updateCarousel() { const width = slides[0].clientWidth; track.style.transform = `translateX(-${currentSlide * width}px)`; }
-        function nextSlide() { currentSlide = (currentSlide + 1) % slides.length; updateCarousel(); }
-        function prevSlide() { currentSlide = (currentSlide - 1 + slides.length) % slides.length; updateCarousel(); }
-        setInterval(nextSlide, 4000);
-        window.addEventListener('resize', updateCarousel);
-
-        // --- SUPABASE & LÓGICA PRINCIPAL ---
+        // --- 1. CONFIGURACIÓN SUPABASE ---
         const { createClient } = supabase;
         const _supabase = createClient('https://iqwkaorhtksudfspupzo.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlxd2thb3JodGtzdWRmc3B1cHpvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxMTQzNTUsImV4cCI6MjA4NDY5MDM1NX0.7vgdhkqHSFUDv6WrFE_5E40YfEh6CmGHovLOYkJ2sNw');
 
+        // --- 2. DATOS GLOBALES ---
+        let datosEvento = { 
+            nombre: "ABNER Y VERANIA", 
+            diaNombre: "DOMINGO", 
+            diaNumero: "21", 
+            mes: "JUNIO", 
+            hora: "6:00 PM",
+            anio: "2026"
+        };
+
+        // --- 3. CARGAR DATOS ---
+        window.onload = function() {
+            const params = new URLSearchParams(window.location.search);
+            if(params.get('evento')) datosEvento.nombre = decodeURIComponent(params.get('evento'));
+            if(params.get('diaNombre')) datosEvento.diaNombre = decodeURIComponent(params.get('diaNombre'));
+            if(params.get('diaNumero')) datosEvento.diaNumero = decodeURIComponent(params.get('diaNumero'));
+            if(params.get('mes')) datosEvento.mes = decodeURIComponent(params.get('mes'));
+            if(params.get('hora')) datosEvento.hora = decodeURIComponent(params.get('hora'));
+
+            updateUI();
+            init();
+        };
+
+        function updateUI() {
+            document.getElementById('overlayNames').innerText = datosEvento.nombre;
+            document.getElementById('heroNames').innerText = datosEvento.nombre;
+            document.title = `Boda de ${datosEvento.nombre}`;
+            const fechaTexto = `${datosEvento.diaNumero} · ${datosEvento.mes.toUpperCase()} · ${datosEvento.anio}`;
+            document.getElementById('heroDate').innerText = fechaTexto;
+        }
+
+        // --- 4. LÓGICA PRINCIPAL DE LA BODA ---
         const weddingForm = document.getElementById('weddingForm');
         const nombreSelect = document.getElementById('nombreSelect');
         const pasesInfo = document.getElementById('pasesInfo');
         const pasesConfirmSelect = document.getElementById('pasesConfirmadosSelect');
         const guestNameDisplay = document.getElementById('guestName');
-        
-        // Variable global para guardar los datos del invitado actual (necesario para el PDF)
         let currentGuestData = null;
 
         async function init() {
             const params = new URLSearchParams(window.location.search);
             const invitadoId = params.get('id');
-
-            // ======================================================
-            // CASO A: SI HAY UN ID EN LA URL (Modo Invitado Único)
-            // ======================================================
+            
             if (invitadoId) {
-                console.log("Modo ID detectado:", invitadoId);
-                
+                console.log("Cargando evento para ID:", invitadoId);
                 const { data, error } = await _supabase
                     .from('invitados')
                     .select('*')
                     .eq('id_invitado_firebase', invitadoId)
-                    .maybeSingle(); // Usamos maybeSingle para evitar errores si no hay resultados
+                    .maybeSingle();
 
-                if (error) {
-                    console.error("Error BD:", error);
-                    alert("Error al cargar la invitación.");
-                    return; // DETENER EJECUCIÓN
-                }
+                if (error) { console.error("Error BD:", error); return; }
 
                 if (data) {
-                    // Limpiamos el select y ponemos SOLO a este invitado
+                    datosEvento.nombre = data.boda_slug;
+                    updateUI();
+
+                    // *** LÓGICA NUEVA: SI YA CONFIRMÓ, MOSTRAR MENSAJE DIRECTO ***
+                    if (data.estado === 'CONFIRMADO' || data.estado === 'CANCELADO') {
+                        // Ocultamos formulario
+                        weddingForm.style.display = 'none';
+                        // Mostramos mensaje de éxito
+                        document.getElementById('successMessage').classList.remove('hidden');
+                        
+                        // Si canceló, cambiamos el texto
+                        if (data.estado === 'CANCELADO') {
+                             document.querySelector('#successMessage h4').innerText = "Entendido";
+                             document.querySelector('#successMessage p').innerText = "Lamentamos que no puedas asistir.";
+                        }
+                        
+                        return; // Terminamos aquí, no llenamos el form
+                    }
+
+                    // Si NO ha confirmado, llenamos el formulario normalmente
                     nombreSelect.innerHTML = '';
                     let opt = document.createElement('option');
                     opt.value = data.fam_nombre;
                     opt.text = data.fam_nombre;
                     opt.dataset.pases = data.num_invitados;
-                    // Guardamos todos los datos en el dataset para usarlos al generar PDF
                     opt.dataset.full = JSON.stringify(data);
                     nombreSelect.appendChild(opt);
                     
-                    // Seleccionamos esta opción automáticamente
                     nombreSelect.value = data.fam_nombre;
-
-                    // Disparamos manualmente la función de cambio para llenar la UI
-                    // (Esto llenará currentGuestData y mostrará los pases)
                     nombreSelect.dispatchEvent(new Event('change'));
-                    
-                    // Bloqueamos el select para que no parezca que puede elegir otro
                     nombreSelect.disabled = true;
                     
-                    // Cambiamos el texto de la etiqueta
                     const label = document.querySelector('label[for="nombreSelect"]');
-                    if(label) label.innerText = "Invitado Identificado:";
+                    if(label) label.innerText = "Hola, esta invitación es para:";
                 } else {
-                    alert("Invitación no encontrada o enlace inválido.");
+                    alert("Enlace no válido o invitación no encontrada.");
                 }
-                
-                // *** IMPORTANTE: RETURN PARA QUE NO CARGUE LA LISTA COMPLETA ***
-                return; 
-            }
-
-            // ======================================================
-            // CASO B: NO HAY ID (Modo Lista Completa)
-            // ======================================================
-            console.log("Cargando lista completa...");
-            const { data, error } = await _supabase
-                .from('invitados')
-                .select('*') // Traemos todo (*) para tener los datos listos para el PDF
-                .eq('boda_slug', 'MILLER')
-                .or('confirmado.is.null,confirmado.eq.0')
-                .order('fam_nombre', { ascending: true });
-
-            if (data) {
-                nombreSelect.innerHTML = '<option value="" disabled selected>Selecciona tu nombre</option>';
-                data.forEach(inv => {
-                    let opt = document.createElement('option');
-                    opt.value = inv.fam_nombre;
-                    opt.text = inv.fam_nombre;
-                    opt.dataset.pases = inv.num_invitados;
-                    opt.dataset.full = JSON.stringify(inv); // Guardamos datos para PDF
-                    nombreSelect.appendChild(opt);
-                });
+            } else {
+                updateUI();
+                nombreSelect.innerHTML = '<option value="" disabled selected>Usa tu enlace personalizado</option>';
             }
         }
 
         nombreSelect.onchange = (e) => {
             const selected = e.target.options[e.target.selectedIndex];
-            
-            // Recuperamos el objeto completo del invitado desde el dataset
             if (selected.dataset.full) {
                 currentGuestData = JSON.parse(selected.dataset.full);
             }
-
             const totalPases = parseInt(selected.dataset.pases);
             guestNameDisplay.innerText = selected.text;
             document.getElementById('guestPases').innerText = totalPases;
@@ -505,55 +468,104 @@
                 opt.value = i; opt.text = i + (i === 1 ? " Persona" : " Personas");
                 pasesConfirmSelect.appendChild(opt);
             }
-            
-            // Seleccionar el máximo por defecto
             pasesConfirmSelect.value = totalPases;
-            
             pasesInfo.classList.remove('hidden');
         };
 
+        // --- ENVIAR FORMULARIO (UPDATE) ---
         weddingForm.onsubmit = async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
             const asistenciaVal = document.getElementById('asistencia').value;
+            const BODA_SLUG = datosEvento.nombre;
+
             btn.innerText = "ENVIANDO...";
             btn.disabled = true;
 
             const pasesReal = (asistenciaVal === "Cancelado") ? 0 : parseInt(pasesConfirmSelect.value);
+            
+            // ESTADO: "CONFIRMADO" o "CANCELADO"
+            const nuevoEstado = (asistenciaVal === "Confirmado") ? "CONFIRMADO" : "CANCELADO";
 
-            // 1. Guardar Confirmación
-            const { error: errorConfirm } = await _supabase
-                .from('confirmaciones')
-                .insert([{ fam_nombre: nombreSelect.value, asistencia: asistenciaVal, pases_confirmados: pasesReal }]);
-
-            // 2. Actualizar Invitado
+            // SÓLO HACEMOS EL UPDATE
             const { error: errorInvitado } = await _supabase
                 .from('invitados')
                 .update({ 
                     num_invitados_confirmados: pasesReal, 
                     confirmado: 1, 
-                    estado: (asistenciaVal === "Cancelado") ? "CANCELADO" : "Confirmado" 
+                    estado: nuevoEstado 
                 })
                 .eq('fam_nombre', nombreSelect.value)
-                .eq('boda_slug', 'MILLER');
+                .eq('boda_slug', BODA_SLUG);
 
-            if (!errorConfirm && !errorInvitado) {
+            if (!errorInvitado) {
                 weddingForm.style.display = 'none';
                 document.getElementById('successMessage').classList.remove('hidden');
+                
+                // Ajustar mensaje si canceló
+                if (nuevoEstado === 'CANCELADO') {
+                     document.querySelector('#successMessage h4').innerText = "Entendido";
+                     document.querySelector('#successMessage p').innerText = "Lamentamos que no puedas asistir.";
+                } else {
+                    lanzarConfeti();
+                }
             } else {
-                console.error(errorConfirm, errorInvitado);
-                alert("Error al enviar la confirmación.");
+                console.error("Error actualizando invitado:", errorInvitado);
+                alert("Ocurrió un error al actualizar tu estatus. Por favor intenta de nuevo.");
                 btn.disabled = false;
                 btn.innerText = "ENVIAR CONFIRMACIÓN";
             }
         };
 
+        // --- FUNCIONES EXTRA ---
+        function addToCalendar() {
+            const event = {
+                title: "Boda " + datosEvento.nombre,
+                start: "20260621T170000", 
+                end: "20260622T020000",
+                location: "Hacienda Las Nubes, Santiago NL",
+                details: "¡Los esperamos!"
+            };
+            const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${event.start}/${event.end}&details=${encodeURIComponent(event.details)}&location=${encodeURIComponent(event.location)}`;
+            window.open(googleUrl, '_blank');
+        }
+
+        function lanzarConfeti() {
+            console.log("¡Confeti!"); 
+        }
+
+        let currentSlide = 0;
+        const track = document.getElementById('track');
+        const slides = document.querySelectorAll('#track img');
+        function updateCarousel() { 
+            if(slides.length > 0) {
+                const width = slides[0].clientWidth; 
+                track.style.transform = `translateX(-${currentSlide * width}px)`; 
+            }
+        }
+        function nextSlide() { currentSlide = (currentSlide + 1) % slides.length; updateCarousel(); }
+        function prevSlide() { currentSlide = (currentSlide - 1 + slides.length) % slides.length; updateCarousel(); }
+        setInterval(nextSlide, 4000);
+        window.addEventListener('resize', updateCarousel);
+
+        const weddingDate = new Date("June 21, 2026 17:00:00").getTime();
+        const countdownTimer = setInterval(function() {
+            const now = new Date().getTime();
+            const distance = weddingDate - now;
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            document.getElementById("days").innerText = days < 10 ? "0" + days : days;
+            document.getElementById("hours").innerText = hours < 10 ? "0" + hours : hours;
+            document.getElementById("minutes").innerText = minutes < 10 ? "0" + minutes : minutes;
+            document.getElementById("seconds").innerText = seconds < 10 ? "0" + seconds : seconds;
+        }, 1000);
+
         function startInvitation() {
             document.getElementById('overlay').classList.add('invisible');
             setTimeout(() => { document.getElementById('mainContent').classList.remove('opacity-0'); AOS.refresh(); }, 800);
         }
-
-        init();
     </script>
 </body>
 </html>
